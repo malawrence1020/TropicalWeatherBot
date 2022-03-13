@@ -189,6 +189,9 @@ module.exports = {
             }
           }
         }
+        context.font = "20px Arial";
+        context.fillStyle = "white";
+        context.fillText(`Mercusa Temperature Map, ${t1.toLocaleString()} [V2.5]`,50,590);
         const buffer = canvas.toBuffer('image/png')
         fs.writeFileSync('./Images/maptest.png', buffer)
       })
@@ -216,15 +219,16 @@ module.exports = {
         context.drawImage(image, 0, 0, 600, 600)
         for (let m = 0; m < 600; m++) {
           for (let n = 0; n < 600; n++) {
-            pre = 0.8 * Math.cos(2 * Math.PI * time/31557600) + 0.6
-            pre += -0.2 * Math.sin(2 * Math.PI * time2/(86400 * 40)) * Math.cos(2 * Math.PI * time2/(86400 * 17))
+            pre = 0.7 * Math.cos(2 * Math.PI * time/31557600) + 0.3
+            pre += -0.3 * Math.sin(2 * Math.PI * time2/(86400 * 40)) * Math.cos(2 * Math.PI * time2/(86400 * 17))
             pre += 0.4 * Math.sin(2 * Math.PI * time2/(86400 * 7))
             pre += 0.5 * Math.cos(2 * Math.PI * (time/(86400 * 4) + m/6400))
             pre += 0.2 * Math.cos(2 * Math.PI * (time/43200 + (m+100)/300)) - m/3000
             pre += 0.2 * Math.cos(2 * Math.PI * (time/86400 + (n+50)/300)) - n/3000
-            pre += 0.1 * Math.cos(2 * Math.PI * (time/86400 + m*n/40000))
-            pre += 0.07 * Math.sin(2 * Math.PI * (time/(86400 * 2) + (m-450)*(n-300)/20000))
-            pre += 0.4 * Math.sin(2 * Math.PI * (time/(86400 * 3) + (m-100)/1000 + (n-50)/1000))
+            pre += 0.09 * Math.cos(2 * Math.PI * (time/86400 + m*n/40000))
+            pre += 0.06 * Math.sin(2 * Math.PI * (time/(86400 * 2) + (m-250)*(n-200)/25000))
+            pre += 0.02 * Math.sin(2 * Math.PI * (time/43200 + (m-450)*(n-550)/20000))
+            pre += 0.5 * Math.sin(2 * Math.PI * (time/(86400 * 3) + (m-100)/1000 + (n-50)/1000))
             if (n%100 == 0 && m%100 == 0) {console.log(pre)}
             if (n == 470 && m == 470) {console.log(pre)}
 
@@ -242,24 +246,31 @@ module.exports = {
               b = 255;
             }
 
-            else if (pre < 2) {
+            else if (pre < 1.75) {
               a = 0.8;
-              r = Math.floor(160 - (pre - 1) * 160);
-              g = Math.floor(230 - (pre - 1) * 50);
+              r = Math.floor(160 - (pre - 1) * (160/0.75));
+              g = Math.floor(230 - (pre - 1) * (50/0.75));
               b = 255;
+            }
+
+            else if (pre < 2.25) {
+              a = 0.8;
+              r = 0;
+              g = Math.floor(180 + (pre - 1.75) * (70/0.5));
+              b = Math.floor(180 - (pre - 1.75) * (180/0.5));
             }
 
             else if (pre < 3) {
               a = 0.8;
-              r = 0;
-              g = Math.floor(180 + (pre - 2) * 70);
-              b = Math.floor(180 - (pre - 2) * 180);
+              r = Math.floor(100 + (pre - 2.25) * (155/0.75));
+              g = 255;
+              b = 0;
             }
 
             else {
               a = 0.8;
-              r = 0;
-              g = 255;
+              r = 255;
+              g = 150;
               b = 0;
             }
 
@@ -267,6 +278,9 @@ module.exports = {
             context.fillRect(1*m, 1*n, 1, 1);
           }
         }
+        context.font = "20px Arial";
+        context.fillStyle = "black";
+        context.fillText(`Mercusa Precipitation Map, ${t1.toLocaleString()} [V1.0]`,50,590);
         const buffer = canvas.toBuffer('image/png')
         fs.writeFileSync('./Images/maptest2.png', buffer)
       })
