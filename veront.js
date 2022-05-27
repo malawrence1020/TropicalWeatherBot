@@ -120,7 +120,7 @@ module.exports = {
             temp += -2 * Math.sin(2 * Math.PI * time/(86400 * 7))
             temp += (Math.sin(2 * Math.PI * time/(86400 * 11)) - (0.5 * Math.cos(2 * Math.PI * time/31557600)) - 5)*(470-m)/400;
             temp += (1 * Math.sin(2 * Math.PI * time/(86400 * 27)) + (0.5 * Math.cos(2 * Math.PI * time/31557600)) + 5)*(n-170)/400;
-            if (n%100 == 0 && m%100 == 0) {console.log(temp)}
+            //if (n%100 == 0 && m%100 == 0) {console.log(temp)}
             if (n == 470 && m == 470) {console.log(temp)}
 
             if (temp > 40) {
@@ -229,7 +229,7 @@ module.exports = {
             pre += 0.06 * Math.sin(2 * Math.PI * (time/(86400 * 2) + (m-250)*(n-200)/25000))
             pre += 0.02 * Math.sin(2 * Math.PI * (time/43200 + (m-450)*(n-550)/20000))
             pre += 0.5 * Math.sin(2 * Math.PI * (time/(86400 * 3) + (m-100)/1000 + (n-50)/1000))
-            if (n%100 == 0 && m%100 == 0) {console.log(pre)}
+            //if (n%100 == 0 && m%100 == 0) {console.log(pre)}
             if (n == 470 && m == 470) {console.log(pre)}
 
             if (pre < 0) {

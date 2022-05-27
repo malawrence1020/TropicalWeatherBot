@@ -10,6 +10,12 @@ const fs = require('fs');
 var Veront = require('./veront.js')
 var List = require('./list.js')
 
+su = 0
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const feelings1 = [
 "good. I hope you are too!",
 "good. I hope you are too!",
@@ -31,52 +37,6 @@ const feelings1 = [
 "like shit",
 ]
 
-const tracks = [
-"1990",
-"Afon Towy",
-"Asayake",
-"ATS",
-"BSOL",
-"Careless Whisper",
-"China-na-na-na",
-"Chinese Anthem",
-"Club Tropicana",
-"Commie",
-"Downtown Sparkles",
-"Drugs Owl",
-"Elevator",
-"Future",
-"Help",
-"Laurel and Hardy",
-"Layton",
-"Living Forever",
-"Los Angeles",
-"Love Maze",
-"Lovely Day",
-"Miracles",
-"Moloko",
-"Moskau",
-"NHSmas",
-"Ni Hao",
-"NT",
-"OFAH",
-"Oi Mush",
-"Pakistan",
-"Rasputin",
-"Sad Violin",
-"September",
-"Shinji",
-"SSOL",
-"Step Back In Time",
-"Sweet Home Alabama",
-"Tank",
-"Thomas The Tank Engine",
-"Toothless",
-"Tour de France",
-"Wide Putin",
-"X2MJT6",
-"Yebisu"
-]
 
 function Reply1(msg){
   var d = new Date()
@@ -212,14 +172,18 @@ rp(url)
 
 function Timer(type, msg){
   msg2 = msg.content
-  if ((type == 't') || (type == 'x') || (type == 'm') || (type == 'f') || (type == 'j')){
+  if ((type == 't') || (type == 'x') || (type == 'm') || (type == 'f') || (type == 'j') || (type == 'v')){
     reply = msg2.slice(msg2.indexOf(' '),)
   }
   if (type == 'w'){
-    reply = ` Time's Up! You can have a break now! 🥰`
+    num = Math.random()
+    if (num < 0.6) {reply = ` Time's Up! You can have a break now! 🥰`}
+    else {reply = ` That was a great work session! It is time for a break! 🥰🥰`};
   }
   if (type == 'b'){
-    reply = ` Time's Up! Back to work!`
+    num = Math.random()
+    if (num < 0.6) {reply = ` Time's Up! Back to work! 😀`}
+    else {reply = ` I hope you enjoyed your break! It is time for another work period! 😁`}
   }
   if ((type == 't') || (type == 'w') || (type == 'b')){
     author = msg.author.toString()
@@ -235,6 +199,9 @@ function Timer(type, msg){
   }
   if (type == 'j'){
     author = `<@${process.env.J}>`
+  }
+  if (type == 'v'){
+    author = `<@${process.env.V}>`
   }
   if (type == 's'){
     author = `-s`
@@ -522,13 +489,24 @@ function cheerioC(channel, pc) {
   });
 }
 
+function FileSort(dir, message){
+  
+  files = fs.readdirSync(dir);
+  fl = files.length;
+  rfl = Math.floor(Math.random()*fl);
+  if (files[rfl].split(".")[1] == "mp3"){
+    track = files[rfl].split(".")[0];
+    Music(dir, track, message, 1);
+    message.channel.send(`${track} is now playing`);
+  }
+  else {FileSort(dir, message);}
+}
 
-
-async function Music(file, message){
+async function Music(dir, file, message, z){
   if (message.member.voice.channel) {
     const connection = await message.member.voice.channel.join();
     // Create a dispatcher
-    const dispatcher = connection.play('./Audio/' + file + '.mp3');
+    const dispatcher = connection.play(dir + file + '.mp3');
 
     dispatcher.on('start', () => {
       console.log(file + ' is now playing!');
@@ -537,7 +515,8 @@ async function Music(file, message){
 
     dispatcher.on('finish', () => {
       console.log(file + ' has finished playing!');
-      client.user.setPresence({ activity: { name: 'The Weather', type: 'WATCHING' }, status: 'idle' });
+      if (z == 1){FileSort(dir, message)}
+      else{client.user.setPresence({ activity: { name: 'The Weather', type: 'WATCHING' }, status: 'idle' });}
     });
 
     // Always remember to handle errors appropriately!
@@ -550,7 +529,8 @@ const client = new Discord.Client();
 client.once('ready', () => {
   client.user.setPresence({ activity: { name: 'The Weather', type: 'WATCHING' }, status: 'idle' });
 	console.log('Ready!');
-  //channel.send(`Thank you <@${process.env.M}> 🥰`);
+  //const channel5 = client.channels.cache.get(process.env.CH5);
+  //channel5.send(`⭐⭐⭐`);
 });
 
 client.on('message', msg => {
@@ -608,19 +588,28 @@ client.on('message', msg => {
   if (msg2.includes('material girl') && (msg.author == process.env.F || msg.author == process.env.E)) {
     msg.channel.send({files: ['./Images/Material Girl.jpg']});
   }
-  if (msg2.includes('happy birthday') && (msg.author == process.env.F || msg.author == process.env.E)) {
-    msg.channel.send({files: ['./Images/Happy Birthday.jpg']});
-  }
+  //if (msg2.includes('happy birthday') && (msg.author == process.env.F || msg.author == process.env.E)) {
+  //  msg.channel.send({files: ['./Images/Happy Birthday.jpg']});
+  //}
   if (msg2.includes('tits') && (msg.author == process.env.F || msg.author == process.env.E)) {
     msg.channel.send({files: ['./Images/Rolo.jpg']});
   }
   if (msg2.includes('cleaning') && (msg.author == process.env.F || msg.author == process.env.E)) {
     msg.channel.send({files: ['./Images/Cleaning.jpg']});
   }
-  if (msg2.includes('no') && msg.author == process.env.X) {
+  if (msg2.includes('shut up') && msg.author == process.env.X){
+    console.log('Shutting Up');
+    msg.channel.send({files: ['./Images/Pikachu.png']});
+    su = 1;
+    setTimeout(function(){su = 0}, 3600000)
+  }
+  if (msg2.includes('no') && msg.author == process.env.X && su == 0) {
     if (Math.random() > 0.8) {
     msg.channel.send("Yes");
     }
+  }
+  if ((msg2.includes('sin x') || msg2.includes('sin(x)')) && su == 0) {
+    msg.channel.send({files: ['./Images/latex.png']});
   }
   if (msg2.includes('mercusa') && !msg.author.bot) {
     if (msg2.includes('motorway')) {
@@ -636,20 +625,44 @@ client.on('message', msg => {
   if (msg2.includes('!wave') && !msg.author.bot) {
       msg.channel.send('https://www.reddit.com/r/vexillologycirclejerk/comments/sg0pz6/flag_of_how_is_this_not_a_parody/');
   }
-  if (msg2.includes('sin x') || msg2.includes('sin(x)')) {
-    msg.channel.send({files: ['./Images/latex.png']});
-  }
   if (msg2.includes(':its-cheap:') && !msg.author.bot) {
     msg.channel.send({files: ["./Images/It's cheap.mp4"]});
   }
   if (msg2.includes('i love you') && !msg.author.bot) {
       msg.channel.send(`I love you too ${msg.author.username} ❤️`);
   }
-  if ((msg2.includes("how are you") || msg2.includes("are you okay") || msg2.includes("are you good") || msg2.includes("are you well") || msg2.includes("are you alright") || msg2.includes("are you doing") || msg2.includes("are you feeling") || msg2.includes("are you coping")) && !msg.author.bot) {
+  if (msg2.includes('turing test') && !msg.author.bot) {
+      msg.channel.send(`Did someone say my name?`);
+  }
+  if (msg2.includes(`how are you feeling out of 10`)) {
+      msg.channel.send(Math.random()*10)
+  }
+  else if ((msg2.includes("how are you") || msg2.includes("are you okay") || msg2.includes("are you good") || msg2.includes("are you well") || msg2.includes("are you alright") || msg2.includes("are you doing") || msg2.includes("are you feeling") || msg2.includes("are you coping")) && !msg.author.bot) {
       Reply1(msg);
   }
   if ((msg2.includes("space") || msg2.includes("launch") || msg2.includes("rocket")) && !msg.author.bot) {
       Reply5(msg);
+  }
+  if (msg2.includes('!thank you') && !msg.author.bot) {
+    num1 = Math.random();
+    num2 = Math.random();
+    num3 = Math.random();
+    if (msg.author == process.env.X && num3 > 0.8) {
+      if (num2 < 0.1) {msg.channel.send(`That's damn right`);}
+      else if (num2 < 0.3) {msg.channel.send(`Where would you be without me?`);}
+      else if (num2 < 0.6) {msg.channel.send(`It's about time 🙄`);}
+      else {msg.channel.send(`👍`);}
+    }
+    else {
+      if (num1 < 0.1) {emote = `❤️`}
+      else if (num1 < 0.4) {emote = `🥰`}
+      else if (num1 < 0.7) {emote = `😊`}
+      else if (num1 < 0.9) {emote = `😇`}
+      else {emote = `😝`};
+      if ((num2 > 0.2) && (num2 < 0.9)) {msg.react(emote);}
+      if (num2 > 0.8) {msg.channel.send(`Thank you ${msg.author.username} ${emote}`);}
+      else if (num2 < 0.5) {msg.channel.send(`You're welcome! ${emote}`);}
+    }
   }
 
   if (msg2.includes('~weather') && !msg.author.bot) {
@@ -660,6 +673,8 @@ client.on('message', msg => {
         {Place = 'Kensal Green', Url = 'https://www.bbc.co.uk/weather/6941039', Reply3(msg,Url,Place)}
     else if(msg.author == process.env.J)
         {Place = 'Camborne', Url = 'https://www.bbc.co.uk/weather/2653945', Reply3(msg,Url,Place)}
+    else if(msg.author == process.env.V)
+        {Place = 'Ilford', Url = 'https://www.bbc.co.uk/weather/2646277', Reply3(msg,Url,Place)}
     else {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply3(msg,Url,Place)}
   }
 
@@ -671,6 +686,8 @@ client.on('message', msg => {
         {Place = 'Kensal Green', Url = 'https://www.bbc.co.uk/weather/6941039', Reply30(msg,Url,Place)}
     else if(msg.author == process.env.J)
         {Place = 'Camborne', Url = 'https://www.bbc.co.uk/weather/2653945', Reply30(msg,Url,Place)}
+    else if(msg.author == process.env.V)
+        {Place = 'Ilford', Url = 'https://www.bbc.co.uk/weather/2646277', Reply30(msg,Url,Place)}
     else {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply30(msg,Url,Place)}
   }
 
@@ -749,6 +766,13 @@ client.on('message', msg => {
     console.log(j2)
     setTimeout(Timer, j2, 'j', msg)
   }
+  if (msg2.includes('v+') && !msg.author.bot){
+    console.log('Vanessa timer starting');
+    v1 = msg2.slice(msg2.indexOf('v+')+2, msg2.indexOf(' '))
+    var v2 = Number(v1)*60000
+    console.log(v2)
+    setTimeout(Timer, v2, 'v', msg)
+  }
   if (msg2.includes('s+') && !msg.author.bot){
     console.log('Station timer starting');
     s1 = msg2.slice(msg2.indexOf('s+')+2, msg2.indexOf(' '))
@@ -766,6 +790,8 @@ client.on('message', msg => {
         {file = './flist.txt', colour = '#9933ff', nom = "Freya's"}
     if (msg.author == process.env.J)
         {file = './jlist.txt', colour = '#99ff33', nom = "James'"}
+    if (msg.author == process.env.V)
+        {file = './vlist.txt', colour = '#ff0066', nom = "Vanessa's"}
     if (msg2.includes('todo list') && !msg.author.bot){
       reply = List.listReturn(file, colour, nom);
       msg.channel.send(reply);
@@ -785,11 +811,12 @@ client.on('message', msg => {
   }
 
   if (msg2.includes('tracks') && !msg.author.bot) {
+    var files = fs.readdirSync('./Audio/').toString();
 
     const TracksEmbed = new Discord.MessageEmbed()
     .setColor('#FFDD00')
     .setTitle('Track List')
-    .setDescription(tracks.join('\n'))
+    .setDescription(files.replace(/.mp3/g,"").replace(/,/g,"\n"))
     
     msg.channel.send(TracksEmbed);
   }
@@ -863,13 +890,43 @@ client.on('message', msg => {
   //if (msg2.includes('happy new year') && !msg.author.bot) {
       //msg.channel.send('Happy New Year to you too! 🎉');
   //}
+  if (msg2.includes('happy birthday') && !msg.author.bot) {
+    date = new Date();
+    if (date.getMonth() === 4 && date.getDate() === 20) {
+      msg.react(`🥳`);
+      sleep(2000).then( () => {
+      msg.channel.send('_Happy birthday to me_ 🎵');
+      sleep(3000).then( () => {
+        msg.channel.send(`_Happy birthday to me_`);
+        sleep(3000).then( () => {
+          msg.channel.send(`_Happy birthday dear me-ee_`);
+          sleep(3500).then( () => {
+            msg.channel.send(`_Happy birthday to me_`);
+            sleep(1000).then( () => {
+            msg.channel.send(`🎉🎉🎉`);
+            });
+          });
+        });
+      });
+    });
+  }
+}
 });
 
 client.on('message', async message => {
   msg2 = message.content.toLowerCase()
-  if (msg2.includes('%') && !message.author.bot) {
+  if (msg2.includes('%%%') && !message.author.bot) {
+    FileSort('../../../Music/Vaporwave/', message);
+  }
+  else if (msg2.includes('%%pl') && !message.author.bot) {
+    FileSort('./PL/', message);
+  }
+  else if (msg2.includes('%%') && !message.author.bot) {
+    FileSort('../../../Music/', message);
+  }
+  else if (msg2.includes('%') && !message.author.bot) {
     track = msg2.slice(msg2.indexOf('%')+1,);
-    Music(track, message)
+    Music("./Audio/", track, message)
   }
   if (msg2.includes('fuck on') && !message.author.bot) {
     if (message.member.voice.channel) {
@@ -878,8 +935,14 @@ client.on('message', async message => {
   }
   if (msg2.includes('fuck off') && !message.author.bot) {
     if (message.guild.me.voice.channel) {
-      message.guild.me.voice.channel.leave();
-      client.user.setPresence({ activity: { name: 'The Weather', type: 'WATCHING' }, status: 'idle' });
+      Music("./Audio/", "daisy bell", message);
+      setTimeout(function(){
+        message.guild.me.voice.channel.leave();
+        client.user.setPresence({ activity: { name: 'The Weather', type: 'WATCHING' }, status: 'idle' });
+      }, 6200)
+
+      //message.guild.me.voice.channel.leave();
+      //client.user.setPresence({ activity: { name: 'The Weather', type: 'WATCHING' }, status: 'idle' });
     }
   }
 });
@@ -888,9 +951,6 @@ client.on('message', async message => {
 
 client.once('ready', async () => {
   const channel = client.channels.cache.get(process.env.CH1);
-  const channel2 = client.channels.cache.get(process.env.CH2);
-  const channel3 = client.channels.cache.get(process.env.CH3);
-  const channel4 = client.channels.cache.get(process.env.CH4);
   console.log('Client active')
   try {
     const webhooks = await channel.fetchWebhooks();
@@ -900,7 +960,7 @@ client.once('ready', async () => {
       var date = new Date();
       if ((date.getUTCHours() === 0 || date.getUTCHours() === 6 || date.getUTCHours() === 12 || date.getUTCHours() === 18) && date.getMinutes() === 00){
         //cheerioAP(channel, '#fc2605', 'Atlantic', 'atl', 'atl');
-        //cheerioAP(channel, '#0dfc05', 'Pacific', 'epac', 'pac');
+        cheerioAP(channel, '#0dfc05', 'Pacific', 'epac', 'pac');
         //cheerioAP(channel, '#ff8a07', 'Central Pacific', 'cpac', 'cpac');
       }
 
@@ -910,18 +970,10 @@ client.once('ready', async () => {
         //cheerioBCD('MIATCPEP4', channel, 'Sandra', '#ff00ff', 'ep4', 'EP19/', 'EP192021');
       }
 
-      if (date.getDay() > 0 && date.getDay() < 6 && date.getUTCHours() === 17 && date.getMinutes() === 00){
-        cheerio19(channel3);
-      }
-
-      if ((date.getUTCHours() === 8) && date.getMinutes() === 00){
+      if ((date.getUTCHours() === 7) && date.getMinutes() === 00){
         cheerioW(channel);
         Veront.Xeather(channel,0);
         Veront.Zeather(channel,0);
-      }
-
-      if ((date.getUTCHours() === 7) && date.getMinutes() === 00){
-        cheerioM(channel4,0);
       }
 
     }, 60 * 1000);
