@@ -11,6 +11,32 @@ var Veront = require('./veront.js')
 var List = require('./list.js')
 
 su = 0
+fr = 0
+
+var mails = { 
+  a: [1,'#fc2605', 'Atlantic', 'atl', 'atl'], 
+  p: [1,'#0dfc05', 'Pacific', 'epac', 'pac'], 
+  cp: [1, '#ff8a07', 'Central Pacific', 'cpac', 'cpac'],
+  b: [1,'HFOTCPCP1', 'Darby', '#14ffff', 'cp1', 'EP05/', 'EP052022'], 
+  c: [0,'MIATCPEP2', 'Frank', '#ffff00', 'ep2', 'EP07/', 'EP072022'], 
+  d: [1,'MIATCPAT3', 'Colin', '#ff00ff', 'at3', 'AT03/', 'AL032022']}
+
+var lines = { 
+  bakerloo: ['Bakerloo Line','line-lul-bakerloo-','#b25f00'], 
+  central: ['Central Line','line-lul-central-','#dc2400'], 
+  circle: ['Circle Line','line-lul-circle-','#ffce00'],
+  district: ['District Line','line-lul-district-','#007229'],
+  hammersmith: ['Hammersmith & City Line','line-lul-hammersmith-city-','#f4a9be'],
+  jubilee: ['Jubilee Line','line-lul-jubilee-','#a1a5a7'],
+  metropolitan: ['Metropolitan Line','line-lul-metropolitan-','#9b0058'],
+  northern: ['Northern Line','line-lul-northern-','#000000'],
+  piccadilly: ['Piccadilly Line','line-lul-piccadilly-','#0019a8'],
+  victoria: ['Victoria Line','line-lul-victoria-','#00a0e2'],
+  waterloo: ['Waterloo & City Line','line-lul-waterloo-city-','#93ceba'],
+  dlr: ['DLR','line-dlr-dlr-','#00afad'],
+  overground: ['Overground','line-raillo-overground-','#ef7b10'],
+  tram: ['Tram','line-tram-tram-','#00bd19'],
+  elizabeth: ['Elizabeth Line','line-elizabeth-','#9364cc']}
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -203,10 +229,6 @@ function Timer(type, msg){
   if (type == 'v'){
     author = `<@${process.env.V}>`
   }
-  if (type == 's'){
-    author = `-s`
-    reply = msg2.slice(msg2.indexOf(' '), msg2.indexOf('/')) + ` ` + msg2.slice(msg2.indexOf('/')+1,)
-  }
   var response = author + reply
 
   msg.channel.send(response)
@@ -239,7 +261,7 @@ function cheerioAP(channel, colour, basin, abb, abb2){
   });
 }
 
-function cheerioBCD(url1, channel, name, colour, code1, code2, code3){
+function cheerioBCD(channel, url1, name, colour, code1, code2, code3){
   url = `https://www.nhc.noaa.gov/text/` + url1 + `.shtml`
   rp(url)
     .then(function(html) {
@@ -321,171 +343,24 @@ function cheerioW(channel) {
   console.log('Weather 4 Update')
 }
 
-function cheerioM(channel,tim) {
-  var thours = new Date().getHours();
-  if (thours < 6) {title = "Good Night Mercusa"; show = "Nightly Weather"; tnow = "tonight"; clr = `#1700ff`; icon = "https://cdn4.iconfinder.com/data/icons/weather-102/512/Weather_6-512.png"}
-  else if (thours < 12) {title = "Good Morning Mercusa"; show = "Breakfast Show: Morning Weather"; tnow = "this morning"; clr = `#ff5000`; icon = "https://cdn4.iconfinder.com/data/icons/weather-flat-10/58/014_-_Sun-512.png"}
-  else if (thours < 18) {title = "Good Afternoon Mercusa"; show = "Daily Weather Forecast"; tnow = "this afternoon"; clr = `#faff00`; icon = "https://cdn4.iconfinder.com/data/icons/weather-flat-10/58/014_-_Sun-512.png"}
-  else {title = "Good Evening Mercusa"; show = `News at ${thours - 12}: Weather Tonight`; tnow = "this evening"; clr = `#ff005e`; icon = "https://cdn4.iconfinder.com/data/icons/weather-102/512/Weather_6-512.png"}
-  const WeatherMEmbed = new Discord.MessageEmbed()
-  .setColor(clr)
-  .setTitle(`${title}!`)
-  .setURL('https://www.theweatheroutlook.com')
-  .setAuthor(`RTM ${show}`, icon)
-  .setDescription(`${title}, let's have a look at ${tnow}'s weather: \n\n` + Veront.Veather("anlight",tim).toString() + "\n\n" + Veront.Veather("deliac",tim).toString() + "\n\n" + Veront.Veather("larion",tim).toString() + "\n\n" + Veront.Veather("torvalain",tim).toString() + "\n\n" + Veront.Veather("veront",tim).toString() + "\n\n And that's your weather - go out and have a great day, Mercusa!")
-	.setThumbnail(icon)
-  .setTimestamp()
-  .setFooter(`RTM ${show}`, icon);
-
-  channel.send(WeatherMEmbed);
-  console.log('Weather M Update')
-}
-
-function cheerioZ(channel) {
-  rp('https://coronavirus.data.gov.uk/')
+function tubeStatus(channel, line) {
+  rp('https://tfl.gov.uk/tube-dlr-overground/status')
   .then(function(html) {
-    const $ = cheerio.load(html);
+    const $ = cheerio.load('.rainbow-list .interactive');
     //var data0 = $('.number-link', html).eq(0).text().replace(/\n/g, " ").replace(/\s\s+/g, " ");
-    var data0 = $('.number-link', html).eq(0).text();
-    var data1 = $('.number-link', html).eq(1).text();
-    var data2 = $('.number-link', html).eq(2).text();
-    var data3 = $('.number-link', html).eq(3).text();
-    var data4 = $('.number-link', html).eq(4).text();
-    var data5 = $('.number-link', html).eq(5).text();
-    var data6 = $('.number-link', html).eq(6).text();
-    var data7 = $('.number-link', html).eq(7).text();
-    var data8 = $('.number-link', html).eq(8).text();
-    var data9 = $('.number-link', html).eq(9).text();
-    var data10 = $('.number-link', html).eq(10).text();
-    var data11 = $('.number-link', html).eq(11).text();
-    var data0a = data0.slice(0,data0.indexOf("N"));
-    var data1a = data1.slice(0,data1.indexOf("T"));
-    var data2a = data2.slice(0,data2.indexOf("N"));
-    var data3a = data3.slice(0,data3.indexOf("T"));
-    var data4a = data4.slice(0,data4.indexOf("N"));
-    var data5a = data5.slice(0,data5.indexOf("T"));
-    var data6a = data6.slice(0,data6.indexOf("P"));
-    var data7a = data7.slice(0,data7.indexOf("P"));
-    var data8a = data8.slice(0,data8.indexOf("P"));
-    var text0 = $('.tooltiptext', html).eq(0).text();
-    var text1 = $('.tooltiptext', html).eq(1).text();
-    var text2 = $('.tooltiptext', html).eq(2).text();
-    var text3 = $('.tooltiptext', html).eq(3).text();
-    var text4 = $('.tooltiptext', html).eq(4).text();
-    var text5 = $('.tooltiptext', html).eq(5).text();
-    var text7 = $('.tooltiptext', html).eq(7).text();
-    var text9 = $('.tooltiptext', html).eq(9).text();
-    var text11 = $('.tooltiptext', html).eq(11).text();
-    var text12 = $('.tooltiptext', html).eq(12).text();
-    var text14 = $('.tooltiptext', html).eq(14).text();
-    var text16 = $('.tooltiptext', html).eq(16).text();
-    var text0a = "Number of 1st doses ";
-    var text1a = "Total number of 1st doses ";
-    var text2a = "Number of 2nd doses ";
-    var text3a = "Total number of 2nd doses ";
-    var text4a = "Number of 3rd doses ";
-    var text5a = "Total number of 3rd doses ";
-    var text7a = "Percentage of 1st doses (12+) ";
-    var text9a = "Percentage of 2nd doses (12+) ";
-    var text11a = "Percentage of 3rd doses (12+) ";
-    var text12a = "Cases ";
-    var text14a = "Deaths ";
-    var text16a = "Hospital admissions ";
-    var text0b = text0.slice(text0.indexOf("reported"),);
-    var text1b = text1.slice(text1.indexOf("reported"),);
-    var text2b = text2.slice(text2.indexOf("reported"),);
-    var text3b = text3.slice(text3.indexOf("reported"),);
-    var text4b = text4.slice(text4.indexOf("reported"),);
-    var text5b = text5.slice(text5.indexOf("reported"),);
-    var text7b = text7.slice(text7.indexOf("reported"),);
-    var text9b = text9.slice(text9.indexOf("reported"),);
-    var text11b = text11.slice(text11.indexOf("reported"),);
-    var text12b = text12.slice(text12.indexOf("reported"),);
-    var text14b = text14.slice(text14.indexOf("reported"),);
-    var text16b = text16.slice(text16.indexOf("reported"),);
-    const CovidEmbed = new Discord.MessageEmbed()
-    .setColor('#9933ff')
-    .setTitle('Daily Covid Update')
-    .setURL('https://coronavirus.data.gov.uk/')
-    .setAuthor('Tropical Weather Bot: Covid Update', 'https://skepticalinquirer.org/wp-content/uploads/sites/29/2020/04/1020px-SARS-CoV-2_without_background.png')
-    .setDescription(data0a + " " + text0a + " " + text0b + "\n" + data1a + " " + text1a + " " + text1b + "\n\n" + data2a + " " + text2a + " " + text2b + "\n" + data3a + " " + text3a + " " + text3b + "\n\n" + data4a + " " + text4a + " " + text4b + "\n" + data5a + " " + text5a + " " + text5b + "\n\n" + data6a + " " + text7a + " " + text7b + "\n" + data7a + " " + text9a + " " + text9b + "\n" + data8a + " " + text11a + " " + text11b + "\n\n" + data9 + " " + text12a + " " + text12b + "\n\n" + data10 + " " + text14a + " " + text14b + "\n\n" + data11 + " " + text16a + " " + text16b)
-    .attachFiles(['https://coronavirus.data.gov.uk/public/assets/frontpage/images/map.png'])
-    .setImage('attachment://map.png')
+    var data0 = $(`#${lines[line][1]}content`, html).text().replace(/\n/g, " ");
+    var data1 = $(`.${line} .service-name`, html).text().replace(/\n/g, " ");
+    var data2 = $(`.${line} .disruption-summary`, html).text().replace(/\n/g, " ");
+    var data0a = data0.slice(0,data0.indexOf("Replan your journey"));
+    const TubeEmbed = new Discord.MessageEmbed()
+    .setColor(`${lines[line][2]}`)
+    .setAuthor(`Lucius: ${lines[line][0]} Update`, 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2016/06/14/09/Roundel_Underground_highres.jpg')
+    .setDescription(`${data1}: ${data2}\n\n${data0a}`)
     .setTimestamp()
-    .setFooter('Tropical Weather Bot: Covid Update', 'https://skepticalinquirer.org/wp-content/uploads/sites/29/2020/04/1020px-SARS-CoV-2_without_background.png');
-
-    channel.send(CovidEmbed);
-    console.log('Covid Update')
-  });
-}
-
-function cheerio19(channel) {
-  rp('https://coronavirus.data.gov.uk/')
-  .then(function(html) {
-    const $ = cheerio.load(html);
-    //var data0 = $('.number-link', html).eq(0).text().replace(/\n/g, " ").replace(/\s\s+/g, " ");
-    var data6 = $('.number-link', html).eq(6).text();
-    var data7 = $('.number-link', html).eq(7).text();
-    var data8 = $('.number-link', html).eq(8).text();
-    var data9 = $('.number-link', html).eq(9).text();
-    var data10 = $('.number-link', html).eq(10).text();
-    var data6a = data6.slice(0,data6.indexOf("P"));
-    var data7a = data7.slice(0,data7.indexOf("P"));
-    var data8a = data8.slice(0,data8.indexOf("P"));
-    var text11 = $('.tooltiptext', html).eq(11).text();
-    var text12 = $('.tooltiptext', html).eq(12).text();
-    var text14 = $('.tooltiptext', html).eq(14).text();
-    var text12a = "cases ";
-    var text14a = "deaths ";
-    var text11b = text11.slice(text11.indexOf("reported"),);
-    var text12b = text12.slice(text12.indexOf("reported"),);
-    var text14b = text14.slice(text14.indexOf("reported"),);
-    const ChockEmbed = new Discord.MessageEmbed()
-    .setColor('#9933ff')
-    .setTitle("How chocked is the UK today?")
-    .setURL('https://coronavirus.data.gov.uk/')
-    .setAuthor('Tropical Weather Bot: Chock Update', 'https://skepticalinquirer.org/wp-content/uploads/sites/29/2020/04/1020px-SARS-CoV-2_without_background.png')
-    .setDescription("How chocked is the UK today?\n\n" + data9 + " " + text12a + " " + text12b + "\n\n" + data10 + " " + text14a + " " + text14b + "\n\n(" + data6a + "," + data7a + "," + data8a + ") - Percentages of vaccines " + text11b)
-    .attachFiles(['https://coronavirus.data.gov.uk/public/assets/frontpage/images/map.png'])
-    .setImage('attachment://map.png')
-    .setTimestamp()
-    .setFooter('Tropical Weather Bot: Chock Update', 'https://skepticalinquirer.org/wp-content/uploads/sites/29/2020/04/1020px-SARS-CoV-2_without_background.png');
+    .setFooter('The control room at Kensal Green', 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2016/06/14/09/Roundel_Underground_highres.jpg');
   
-    channel.send(ChockEmbed);
-    console.log('Chock Update');
-  });
-}
-
-function cheerioC(channel, pc) {
-  rp('https://coronavirus.data.gov.uk/search?postcode=' + pc)
-  .then(function(html) {
-    const $ = cheerio.load(html);
-    var data0 = $('.postcode-lead-data li h3', html).eq(0).text();
-    var data1 = $('.postcode-lead-data li .numbers-container .content-size', html).eq(0).text();
-    var data2 = $('.postcode-lead-data li .numbers-container .change-box strong', html).eq(0).text();
-    var data3 = $('.postcode-lead-data li .numbers-container .change-box', html).eq(0).text();
-    var data4 = $('.postcode-lead-data li .numbers-container li', html).eq(2).text();
-    var data0b = data0.slice(0,data0.indexOf("Available"));
-    var data1b = data1.slice(0,data1.indexOf("Total")).replace("days", "days: ");
-    var data3b = data3.slice(data3.indexOf("("),data3.indexOf(")")+1);
-    var data4b = data4.slice(0,data4.indexOf("Rate")).replace("people", "people: ");
-    reply0 = "**" + data0b + "**\n" + data1b + " (" + data2 + ") " + data3b + "\n" + data4b
-    channel.send(reply0);
-    if($('.postcode-lead-data li .numbers-container', html).eq(1).text() !== "") {
-      var vacc0 = $('.postcode-lead-data li h3', html).eq(1).text();
-      var vacc1 = $('.postcode-lead-data li .numbers-container li', html).eq(3).text();
-      var vacc2 = $('.postcode-lead-data li .numbers-container li', html).eq(4).text();
-      var vacc3 = $('.postcode-lead-data li .numbers-container li', html).eq(5).text();
-      var vacc0b = vacc0.slice(0,vacc0.indexOf("Available"));
-      var vacc1b = vacc1.slice(0,vacc1.indexOf("Percentage")).replace("dose", "doses: ");
-      var vacc2b = vacc2.slice(0,vacc2.indexOf("Percentage")).replace("dose", "doses: ");
-      var vacc3b = vacc3.slice(0,vacc3.indexOf("Percentage")).replace("boosters", "boosters: ");
-      reply1 = "**" + vacc0b + "**\n" + vacc1b + "\n" + vacc2b + "\n" + vacc3b
-      channel.send(reply1);
-    }
-    else {
-    }
-    console.log(pc);
+    channel.send(TubeEmbed);
+    console.log(`${lines[line][0]} Update`);
   });
 }
 
@@ -530,7 +405,7 @@ client.once('ready', () => {
   client.user.setPresence({ activity: { name: 'The Weather', type: 'WATCHING' }, status: 'idle' });
 	console.log('Ready!');
   //const channel5 = client.channels.cache.get(process.env.CH5);
-  //channel5.send(`⭐⭐⭐`);
+  //channel5.send(`<@${process.env.V}> Good luck 😊`);
 });
 
 client.on('message', msg => {
@@ -558,17 +433,6 @@ client.on('message', msg => {
       files: ['./Images/Spam.jpg'],
     });
   }
-  if (msg2.includes('bolton') && !msg.author.bot) {
-      msg.channel.send('Bolton ruins everything');
-  }
-  if (msg2.includes('blackburn') && !msg.author.bot) {
-      msg.channel.send('I hate Blackburn');
-      msg.react(`😡`);
-  }
-  if (msg2.includes('npt') && !msg.author.bot) {
-      msg.channel.send('Wow, what a shithole');
-      msg.react(`🤬`);
-  }
   if (msg2.includes('go away') && !msg.author.bot) {
       msg.channel.send('You go away');
   }
@@ -588,9 +452,9 @@ client.on('message', msg => {
   if (msg2.includes('material girl') && (msg.author == process.env.F || msg.author == process.env.E)) {
     msg.channel.send({files: ['./Images/Material Girl.jpg']});
   }
-  //if (msg2.includes('happy birthday') && (msg.author == process.env.F || msg.author == process.env.E)) {
-  //  msg.channel.send({files: ['./Images/Happy Birthday.jpg']});
-  //}
+  if (msg2.includes('happy birthday') && (msg.author == process.env.F || msg.author == process.env.E)) {
+    msg.channel.send({files: ['./Images/Happy Birthday.jpg']});
+  }
   if (msg2.includes('tits') && (msg.author == process.env.F || msg.author == process.env.E)) {
     msg.channel.send({files: ['./Images/Rolo.jpg']});
   }
@@ -604,9 +468,14 @@ client.on('message', msg => {
     setTimeout(function(){su = 0}, 3600000)
   }
   if (msg2.includes('no') && msg.author == process.env.X && su == 0) {
-    if (Math.random() > 0.8) {
+    if (Math.random() > 0.7) {
     msg.channel.send("Yes");
     }
+  }
+  if (msg2.includes('lucius is my friend') && fr == 0){
+    msg.channel.send(`${msg.author.toString()} You are my friend too! ❤️`);
+    fr = 1;
+    setTimeout(function(){fr = 0}, 60000)
   }
   if ((msg2.includes('sin x') || msg2.includes('sin(x)')) && su == 0) {
     msg.channel.send({files: ['./Images/latex.png']});
@@ -640,7 +509,7 @@ client.on('message', msg => {
   else if ((msg2.includes("how are you") || msg2.includes("are you okay") || msg2.includes("are you good") || msg2.includes("are you well") || msg2.includes("are you alright") || msg2.includes("are you doing") || msg2.includes("are you feeling") || msg2.includes("are you coping")) && !msg.author.bot) {
       Reply1(msg);
   }
-  if ((msg2.includes("space") || msg2.includes("launch") || msg2.includes("rocket")) && !msg.author.bot) {
+  if ((msg2.includes("~space") || msg2.includes("launch")) && !msg.author.bot) {
       Reply5(msg);
   }
   if (msg2.includes('!thank you') && !msg.author.bot) {
@@ -674,7 +543,7 @@ client.on('message', msg => {
     else if(msg.author == process.env.J)
         {Place = 'Camborne', Url = 'https://www.bbc.co.uk/weather/2653945', Reply3(msg,Url,Place)}
     else if(msg.author == process.env.V)
-        {Place = 'Ilford', Url = 'https://www.bbc.co.uk/weather/2646277', Reply3(msg,Url,Place)}
+        {Place = 'South Kensington', Url = 'https://www.bbc.co.uk/weather/2637395', Reply3(msg,Url,Place)}
     else {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply3(msg,Url,Place)}
   }
 
@@ -687,7 +556,7 @@ client.on('message', msg => {
     else if(msg.author == process.env.J)
         {Place = 'Camborne', Url = 'https://www.bbc.co.uk/weather/2653945', Reply30(msg,Url,Place)}
     else if(msg.author == process.env.V)
-        {Place = 'Ilford', Url = 'https://www.bbc.co.uk/weather/2646277', Reply30(msg,Url,Place)}
+        {Place = 'South Kensington', Url = 'https://www.bbc.co.uk/weather/2637395', Reply30(msg,Url,Place)}
     else {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply30(msg,Url,Place)}
   }
 
@@ -714,99 +583,79 @@ client.on('message', msg => {
     });
   }
 
-  if (msg2.includes('t+') && !msg.author.bot){
-    console.log('Timer starting');
-    t1 = msg2.slice(msg2.indexOf('t+')+2, msg2.indexOf(' '))
+  if ((msg2.includes('t+') || msg2.includes('w+') || msg2.includes('b+') || msg2.includes('x+') || msg2.includes('m+') || msg2.includes('f+') || msg2.includes('j+') || msg2.includes('v+')) && !msg.author.bot) {
+    if (msg2.includes('t+')){
+      console.log('Timer starting');
+      type = `t`;
+      type2 = `Reminder`;
+    }
+    if (msg2.includes('w+')){
+      console.log('Work starting');
+      type = `w`;
+      type2 = `Work period`;
+    }
+    if (msg2.includes('b+')){
+      console.log('Break starting');
+      type = `b`;
+      type2 = `Break period`;
+    }
+    if (msg2.includes('x+')){
+      console.log('Matthew timer starting');
+      type = `x`;
+    }
+    if (msg2.includes('m+')){
+      console.log('Matthew timer starting');
+      type = `m`;
+    }
+    if (msg2.includes('f+')){
+      console.log('Freya timer starting');
+      type = `f`;
+    }
+    if (msg2.includes('j+')){
+      console.log('James timer starting');
+      type = `j`;
+    }
+    if (msg2.includes('v+')){
+      console.log('Vanessa timer starting');
+      type = `v`;
+    }
+    if (msg2.includes('w+') || msg2.includes('b+')) {t1 = msg2.slice(msg2.indexOf(`${type}+`)+2, )}
+    else {t1 = msg2.slice(msg2.indexOf(`${type}+`)+2, msg2.indexOf(' '))}
     var t2 = Number(t1)*60000
     console.log(t2)
-    msg.channel.send('Reminder set for ' + t1 + ' minutes')
-    setTimeout(Timer, t2, 't', msg)
-  }
-  if (msg2.includes('w+') && !msg.author.bot){
-    console.log('Work starting');
-    w1 = msg2.slice(msg2.indexOf('w+')+2,)
-    var w2 = Number(w1)*60000
-    console.log(w2)
-    msg.channel.send('Work period set for ' + w1 + ' minutes')
-    setTimeout(Timer, w2, 'w', msg)
-  }
-  if (msg2.includes('b+') && !msg.author.bot){
-    console.log('Break starting');
-    b1 = msg2.slice(msg2.indexOf('b+')+2,)
-    var b2 = Number(b1)*60000
-    console.log(b2)
-    msg.channel.send('Break period set for ' + b1 + ' minutes')
-    setTimeout(Timer, b2, 'b', msg)
-  }
-  if (msg2.includes('x+') && !msg.author.bot){
-    console.log('Matthew timer starting');
-    x1 = msg2.slice(msg2.indexOf('x+')+2, msg2.indexOf(' '))
-    var x2 = Number(x1)*60000
-    console.log(x2)
-    setTimeout(Timer, x2, 'x', msg)
-  }
-  if (msg2.includes('m+') && !msg.author.bot){
-    console.log('Matthew timer starting');
-    m1 = msg2.slice(msg2.indexOf('m+')+2, msg2.indexOf(' '))
-    var m2 = Number(m1)*60000
-    console.log(m2)
-    setTimeout(Timer, m2, 'm', msg)
-  }
-  if (msg2.includes('f+') && !msg.author.bot){
-    console.log('Freya timer starting');
-    f1 = msg2.slice(msg2.indexOf('f+')+2, msg2.indexOf(' '))
-    var f2 = Number(f1)*60000
-    console.log(f2)
-    setTimeout(Timer, f2, 'f', msg)
-  }
-  if (msg2.includes('j+') && !msg.author.bot){
-    console.log('James timer starting');
-    j1 = msg2.slice(msg2.indexOf('j+')+2, msg2.indexOf(' '))
-    var j2 = Number(j1)*60000
-    console.log(j2)
-    setTimeout(Timer, j2, 'j', msg)
-  }
-  if (msg2.includes('v+') && !msg.author.bot){
-    console.log('Vanessa timer starting');
-    v1 = msg2.slice(msg2.indexOf('v+')+2, msg2.indexOf(' '))
-    var v2 = Number(v1)*60000
-    console.log(v2)
-    setTimeout(Timer, v2, 'v', msg)
-  }
-  if (msg2.includes('s+') && !msg.author.bot){
-    console.log('Station timer starting');
-    s1 = msg2.slice(msg2.indexOf('s+')+2, msg2.indexOf(' '))
-    var s2 = Number(s1)*60000
-    console.log(s2)
-    setTimeout(Timer, s2, 's', msg)
+    if (msg2.includes('t+') || msg2.includes('w+') || msg2.includes('b+')) {msg.channel.send(`${type2} set for ${t1} minutes`)}
+    setTimeout(Timer, t2, type, msg)
   }
 
-  if (msg2.includes('todo list') || msg2.includes("l-") || msg2.includes("l+")) {
+  if (msg2.includes('todo list') || msg2.includes("l-") || msg2.includes("l+") || msg2.includes("todone list")) {
     if (msg.author == process.env.X)
-        {file = './xlist.txt', colour = '#00ccff', nom = "Matthew's"}
+        {file = './xlist.txt', colour = '#00ccff', nom = "Matthew", file2 = './xlist2.txt'}
     if (msg.author == process.env.M)
-        {file = './mlist.txt', colour = '#ff6600', nom = "Matthew's"}
+        {file = './mlist.txt', colour = '#ff6600', nom = "Matthew", file2 = 0}
     if (msg.author == process.env.F)
-        {file = './flist.txt', colour = '#9933ff', nom = "Freya's"}
+        {file = './flist.txt', colour = '#9933ff', nom = "Freya", file2 = 0}
     if (msg.author == process.env.J)
-        {file = './jlist.txt', colour = '#99ff33', nom = "James'"}
+        {file = './jlist.txt', colour = '#99ff33', nom = "James", file2 = 0}
     if (msg.author == process.env.V)
-        {file = './vlist.txt', colour = '#ff0066', nom = "Vanessa's"}
+        {file = './vlist.txt', colour = '#ff0066', nom = "Vanessa", file2 = './vlist2.txt'}
     if (msg2.includes('todo list') && !msg.author.bot){
       reply = List.listReturn(file, colour, nom);
       msg.channel.send(reply);
     }
     if (msg2.includes('l+') && !msg.author.bot){
-      item = msg.content.slice(msg2.indexOf('l+')+3,)
+      item = msg.content.slice(msg2.indexOf('l+')+2,).trim()
       reply = List.listAdd(file, item);
       msg.channel.send(reply);
     }
     if (msg2.includes('l-') && !msg.author.bot){
-      num = msg2.slice(msg2.indexOf('l-')+2,)
+      num = msg2.slice(msg2.indexOf('l-')+2,).trim()
       if (!isNaN(Number(num))) {
-        reply = List.listDel(file, num);
+        reply = List.listDel(file, num, file2);
         msg.channel.send(reply);
       }
+    }
+    if (msg2.includes('todone list') && !msg.author.bot){
+      List.listWipe(msg.channel, file2, colour, nom, 0);
     }
   }
 
@@ -821,50 +670,6 @@ client.on('message', msg => {
     msg.channel.send(TracksEmbed);
   }
 
-  if (msg2.includes("~chock") && !msg.author.bot) {
-    cheerio19(msg.channel);
-  }
-  if (msg2.includes("~covid") && !msg.author.bot) {
-    cheerioZ(msg.channel);
-  }
-  if (msg2.includes("~cases") && !msg.author.bot) {
-    postcode = msg2.slice(msg2.indexOf('~cases')+7,).replace(" ", "+");
-    cheerioC(msg.channel, postcode);
-  }
-  if (msg2.includes("~atl") && !msg.author.bot) {
-    cheerioAP(msg.channel, '#fc2605', 'Atlantic', 'atl', 'atl');
-  }
-  if (msg2.includes("~pac") && !msg.author.bot) {
-    cheerioAP(msg.channel, '#0dfc05', 'Pacific', 'epac', 'pac');
-  }
-  if (msg2.includes("~cpac") && !msg.author.bot) {
-    cheerioAP(msg.channel, '#ff8a07', 'Central Pacific', 'cpac', 'cpac');
-  }
-  if (msg2.includes("~veront") && !msg.author.bot) {
-    reply = Veront.Veather("veront",0).toString();
-    msg.channel.send(reply);
-  }
-  if (msg2.includes("~anlight") && !msg.author.bot) {
-    reply = Veront.Veather("anlight",0).toString();
-    msg.channel.send(reply);
-  }
-  if (msg2.includes("~torvalain") && !msg.author.bot) {
-    reply = Veront.Veather("torvalain",0).toString();
-    msg.channel.send(reply);
-  }
-  if (msg2.includes("~deliac") && !msg.author.bot) {
-    reply = Veront.Veather("deliac",0).toString();
-    msg.channel.send(reply);
-  }
-  if (msg2.includes("~larion") && !msg.author.bot) {
-    reply = Veront.Veather("larion",0).toString();
-    msg.channel.send(reply);
-  }
-  if (msg2.includes("~mercusa") && !msg.author.bot) {
-    tim = msg2.slice(msg2.indexOf('~mercusa')+8,);
-    if (tim){cheerioM(msg.channel,tim)}
-    else {cheerioM(msg.channel,0)}
-  }
   if (msg2.includes('~twb') && !msg.author.bot) {
     tim = msg2.slice(msg2.indexOf('~twb')+4,);
     if (tim){Veront.Xeather(msg.channel,tim)}
@@ -875,17 +680,42 @@ client.on('message', msg => {
     if (tim){Veront.Zeather(msg.channel,tim)}
     else {Veront.Zeather(msg.channel,0)}
   }
-  if (msg2.includes('//mercusa') && !msg.author.bot) {
-    Veront.ASC(msg.channel,221,48)
+  if (msg2.includes('~disable')){
+    kill = msg2.slice(msg2.indexOf('~disable')+9,);
+    mails[kill][0] = 1;
+    msg.channel.send(`Disabled ${kill}`);
+    console.log(mails);
   }
-  if (msg2.includes('//callight') && !msg.author.bot) {
-    Veront.ASC(msg.channel,221,97)
+  if (msg2.includes('~enable')){
+    kill = msg2.slice(msg2.indexOf('~enable')+8,);
+    mails[kill][0] = 0;
+    msg.channel.send(`Enabled ${kill}`);
+    console.log(mails);
   }
-  if (msg2.includes('//redest') && !msg.author.bot) {
-    Veront.ASC(msg.channel,221,149)
+  if (msg2.includes('~req')){
+    kill = msg2.slice(msg2.indexOf('~req')+5,);
+    if (kill == "a" || kill == "p" || kill == "cp") {
+      cheerioAP(msg.channel, mails[kill][1], mails[kill][2], mails[kill][3], mails[kill][4]);
+    }
+    if (kill == "b" || kill == "c" || kill == "d") {
+      cheerioBCD(msg.channel, mails[kill][1], mails[kill][2], mails[kill][3], mails[kill][4], mails[kill][5], mails[kill][6]);
+    }
   }
-  if (msg2.includes('//vestinsel') && !msg.author.bot) {
-    Veront.ASC(msg.channel,221,194)
+  if (msg2.includes('~tube')){
+    line = msg2.slice(msg2.indexOf('~tube')+6,);
+    if (lines[line]) {tubeStatus(msg.channel, line)};
+  }
+
+  if (msg2.includes('///') && !msg.author.bot) {
+    if (msg2.includes('///contest') && !msg.author.bot) {
+      data = msg2.split(' ');
+      Veront.ASC2(msg.channel,data)
+    }
+    else {
+      country = msg2.slice(msg2.indexOf('///')+3,msg2.indexOf(' '));
+      points = msg2.slice(msg2.indexOf(' ')+1,);
+      Veront.ASC3(msg.channel,country,points);
+    }
   }
   //if (msg2.includes('happy new year') && !msg.author.bot) {
       //msg.channel.send('Happy New Year to you too! 🎉');
@@ -951,6 +781,7 @@ client.on('message', async message => {
 
 client.once('ready', async () => {
   const channel = client.channels.cache.get(process.env.CH1);
+  const channel5 = client.channels.cache.get(process.env.CH5);
   console.log('Client active')
   try {
     const webhooks = await channel.fetchWebhooks();
@@ -959,21 +790,26 @@ client.once('ready', async () => {
     setInterval(function () {
       var date = new Date();
       if ((date.getUTCHours() === 0 || date.getUTCHours() === 6 || date.getUTCHours() === 12 || date.getUTCHours() === 18) && date.getMinutes() === 00){
-        //cheerioAP(channel, '#fc2605', 'Atlantic', 'atl', 'atl');
-        cheerioAP(channel, '#0dfc05', 'Pacific', 'epac', 'pac');
-        //cheerioAP(channel, '#ff8a07', 'Central Pacific', 'cpac', 'cpac');
+        if (mails.a[0] == 0) {cheerioAP(channel, mails.a[1], mails.a[2], mails.a[3], mails.a[4]);}
+        if (mails.p[0] == 0) {cheerioAP(channel, mails.p[1], mails.p[2], mails.p[3], mails.p[4]);}
+        if (mails.cp[0] == 0) {cheerioAP(channel, mails.cp[1], mails.cp[2], mails.cp[3], mails.cp[4]);}
       }
 
-      if ((date.getUTCHours() === 0 || date.getUTCHours() === 3 || date.getUTCHours() === 6 || date.getUTCHours() === 9 || date.getUTCHours() === 12 || date.getUTCHours() === 15 || date.getUTCHours() === 18 || date.getUTCHours() === 21) && date.getMinutes() === 00){
-        //cheerioBCD('MIATCPAT1', channel, 'Wanda', '#14ffff', 'at1', 'AT21/', 'AL212021');
-        //cheerioBCD('MIATCPAT4', channel, 'Nicholas', '#ffff00', 'at4', 'AT14/', 'AL142021');
-        //cheerioBCD('MIATCPEP4', channel, 'Sandra', '#ff00ff', 'ep4', 'EP19/', 'EP192021');
+      if ((date.getUTCHours() === 0 || date.getUTCHours() === 3 || date.getUTCHours() === 6 || date.getUTCHours() === 9 || date.getUTCHours() === 12 || date.getUTCHours() === 15 || date.getUTCHours() === 18 || date.getUTCHours() === 21) && date.getMinutes() === 0){
+        if (mails.b[0] == 0) {cheerioBCD(channel, mails.b[1], mails.b[2], mails.b[3], mails.b[4], mails.b[5], mails.b[6]);}
+        if (mails.c[0] == 0) {cheerioBCD(channel, mails.c[1], mails.c[2], mails.c[3], mails.c[4], mails.c[5], mails.c[6]);}
+        if (mails.d[0] == 0) {cheerioBCD(channel, mails.d[1], mails.d[2], mails.d[3], mails.d[4], mails.d[5], mails.d[6]);}
       }
 
       if ((date.getUTCHours() === 7) && date.getMinutes() === 00){
         cheerioW(channel);
         Veront.Xeather(channel,0);
         Veront.Zeather(channel,0);
+      }
+
+      if ((date.getUTCHours() === 00) && date.getMinutes() === 00){
+        List.listWipe(channel5, `./xlist2.txt`, `#00ccff`, `Matthew`, 1);
+        List.listWipe(channel5, `./vlist2.txt`, `#ff0066`, `Vanessa`, 1);
       }
 
     }, 60 * 1000);

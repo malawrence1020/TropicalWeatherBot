@@ -96,6 +96,8 @@ async def on_message(msg):
                                 './Images/Aeran Map.jpg'))
     if 'i love you' in msg2 and not msg.author.bot:
         await msg.channel.send(f'I love you too {msg.author.name} ❤️')
+    if 'i love you' in msg2 and not msg.author.bot:
+        await msg.channel.send(f'I love you too <@{msg.author.id}> ❤️')
     if ('are you okay' in msg2 or 'how are you' in msg2 or 'are you good'
         in msg2 or 'are you well' in msg2 or 'are you alright' in msg2 or
         'are you doing' in msg2 or 'are you feeling' in msg2 or

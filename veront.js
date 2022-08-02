@@ -289,29 +289,99 @@ module.exports = {
       channel.send({files: ["./Images/maptest2.png"]});
     },
 
-    ASC : function (channel, x, y) {
+    ASC2 : function (channel, data) {
       const fs = require('fs')
       const { createCanvas, loadImage } = require('canvas')
+      vec = data;
+      (score = []).length = vec.length; score.fill(0);
+      fs.writeFileSync('./vec.txt', vec);
+      fs.writeFileSync('./score.txt', score);
 
-      const width = 250
-      const height = 250
+      const width = 627
+      const height = 547
       const canvas = createCanvas(width, height)
       const context = canvas.getContext('2d')
 
-      loadImage('./Images/2.png').then(image => {
-        context.drawImage(image, 0, 0, 250, 250)
+      loadImage('./Images/song.png').then(image => {
+        context.drawImage(image, 0, 0, 627, 547)
 
-        var grd = context.createRadialGradient(x,y,5,x,y,10);
-        grd.addColorStop(0,"rgba(255,255,0,1)");
-        grd.addColorStop(1,"rgba(0,0,0,0)");
-        context.fillStyle = grd;
-        context.fillRect(x-10,y-10,20,20);
+        
+        context.font = "bold 24px Courier New";
+        context.fillStyle = "black";
+        for (let i = 1; i < vec.length; i++) {
+          if (i%2 == 1) {
+            context.fillText(vec[i].toUpperCase(),45,80+20*i);
+          }
+          else {
+            context.fillText(vec[i].toUpperCase(),356,60+20*i);
+          }
+        }
 
         const buffer = canvas.toBuffer('image/png')
-        fs.writeFileSync('./Images/songtest.png', buffer)
+        fs.writeFileSync('./Images/song1.png', buffer)
+
+
+        loadImage('./Images/song1.png').then(image => {
+          context.drawImage(image, 0, 0, 627, 547)
+  
+          
+          context.font = "bold 24px Courier New";
+          context.fillStyle = "yellow";
+          for (let i = 1; i < score.length; i++) {
+            if (i%2 == 1) {
+              context.fillText(score[i],215,80+20*i);
+            }
+            else {
+              context.fillText(score[i],525,60+20*i);
+            }
+          }
+  
+          const buffer = canvas.toBuffer('image/png')
+          fs.writeFileSync('./Images/song2.png', buffer)
+        })
       })
 
-      
-      channel.send({files: ["./Images/songtest.png"]});
+      channel.send({files: ["./Images/song2.png"]});
+    },
+
+    ASC3 : function (channel, country, points) {
+      const fs = require('fs')
+      const { createCanvas, loadImage } = require('canvas')
+      var vec = fs.readFileSync('./vec.txt').toString('utf-8').split(',');
+      var score = fs.readFileSync('./score.txt').toString('utf-8').split(',');
+      ind = vec.indexOf(country);
+      if (ind == -1){
+        channel.send(`${country} is not in this contest!`)
+      }
+      else {
+        score[ind] = Number(score[ind]) + Number(points);
+      }
+      fs.writeFileSync('./score.txt', score);
+
+      const width = 627
+      const height = 547
+      const canvas = createCanvas(width, height)
+      const context = canvas.getContext('2d')
+
+      loadImage('./Images/song1.png').then(image => {
+        context.drawImage(image, 0, 0, 627, 547)
+
+        
+        context.font = "bold 24px Courier New";
+        context.fillStyle = "yellow";
+        for (let i = 1; i < score.length; i++) {
+          if (i%2 == 1) {
+            context.fillText(score[i],215,80+20*i);
+          }
+          else {
+            context.fillText(score[i],525,60+20*i);
+          }
+        }
+
+        const buffer = canvas.toBuffer('image/png')
+        fs.writeFileSync('./Images/song2.png', buffer)
+      })
+
+      channel.send({files: ["./Images/song2.png"]});
     }
 }
