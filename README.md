@@ -9,3 +9,12 @@ The Veront Temperature model is currently sitting at version 2.5, and will be ex
 The python version of this bot is sitting at a very early stage in development. Hopefully I will get time to work on transferring more functions across.
 
 Finally, I also intend to implement some kind of 'help' command, as this bot is now so complex that I forget half of the things it does sometimes.
+
+### v7: Happy belated birthday!
+This is the second major version of Lucius, with lots of new functionality and lots of older functions removed. Since the last release, the covid functions and some of the 1st gen weather functions have been removed. The hurricane and todo list functions have been rewritten. Extra musical abilities, a tube status function, some more dynamic timer responses, some ASC stuff and a todone list command have been added.
+
+The Veront Temperature model has now reached v3.0, and both the Veather and Xeather functions finally read from this model. The model is much more realistic than before, incorporating north-south and continential-coastal variations, as well as daily fluctuations (which were apparently missing from v2.5). The Veront Precipitation model is now at v2.0. Whilst this does not embody a realistic field, I am very happy with the results this model produces. The only update relative to v1.0 is the incorporation of temperature controls to allow for snowfall. There is as of yet no sunrise/sunset model, but this would require axial tilt/solar declination, as well as a more concrete longitude/latitude system.
+
+I have not touched the python version in months, as Lucius is not suited to development in Python. See <a href="https://github.com/NecessarilyNess/Marina">here</a> for Lucius' sister, written in Python. Likewise, Lucius still lacks a help command. Maybe he can have one for Christmas.
+
+Happy belated birthday Matthew!

@@ -39,26 +39,28 @@ module.exports = {
 
     var text = fs.readFileSync(file).toString('utf-8')
     var textByLine = text.split('\n')
-    var message = '"' + textByLine[num] + '" removed from todo list!'
-    var mem = textByLine[num]
-    textByLine.splice(num, 1)
-    var newList = textByLine.join('\n')
-    
-    fs.writeFile(file, newList, function (err) {
-      if (err) {
-        console.log('failed')
-      } else {
-        console.log(message)
-      }
-    })
-
-    if (file2 != 0) {
-      fs.appendFile(file2, `${mem} \n`, function (err) {
-        if (err) {console.log('failed')}
+    if (num < textByLine.length-1){
+      var message = '"' + textByLine[num] + '" removed from todo list!'
+      var mem = textByLine[num]
+      textByLine.splice(num, 1)
+      var newList = textByLine.join('\n')
+      
+      fs.writeFile(file, newList, function (err) {
+        if (err) {
+          console.log('failed')
+        } else {
+          console.log(message)
+        }
       })
+
+      if (file2 != 0) {
+        fs.appendFile(file2, `${mem} \n`, function (err) {
+          if (err) {console.log('failed')}
+        })
+      }
+      return message
     }
-    return message
-    },  
+  },  
     
   listWipe : function (channel, file, colour, nom, wipe) {
 

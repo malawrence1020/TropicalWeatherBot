@@ -15,10 +15,10 @@ fr = 0
 
 var mails = { 
   a: [1,'#fc2605', 'Atlantic', 'atl', 'atl'], 
-  p: [1,'#0dfc05', 'Pacific', 'epac', 'pac'], 
+  p: [0,'#0dfc05', 'Pacific', 'epac', 'pac'], 
   cp: [1, '#ff8a07', 'Central Pacific', 'cpac', 'cpac'],
   b: [1,'HFOTCPCP1', 'Darby', '#14ffff', 'cp1', 'EP05/', 'EP052022'], 
-  c: [0,'MIATCPEP2', 'Frank', '#ffff00', 'ep2', 'EP07/', 'EP072022'], 
+  c: [1,'MIATCPEP2', 'Frank', '#ffff00', 'ep2', 'EP07/', 'EP072022'], 
   d: [1,'MIATCPAT3', 'Colin', '#ff00ff', 'at3', 'AT03/', 'AL032022']}
 
 var lines = { 
@@ -341,6 +341,26 @@ function cheerioW(channel) {
   console.log('Weather 2 Update')
   console.log('Weather 3 Update')
   console.log('Weather 4 Update')
+}
+
+function cheerioM(channel,tim) {
+  var thours = new Date().getHours();
+  if (thours < 6) {title = "Good Night Mercusa"; show = "Nightly Weather"; tnow = "tonight"; clr = `#1700ff`; icon = "https://cdn4.iconfinder.com/data/icons/weather-102/512/Weather_6-512.png"}
+  else if (thours < 12) {title = "Good Morning Mercusa"; show = "Breakfast Show: Morning Weather"; tnow = "this morning"; clr = `#ff5000`; icon = "https://cdn4.iconfinder.com/data/icons/weather-flat-10/58/014_-_Sun-512.png"}
+  else if (thours < 18) {title = "Good Afternoon Mercusa"; show = "Daily Weather Forecast"; tnow = "this afternoon"; clr = `#faff00`; icon = "https://cdn4.iconfinder.com/data/icons/weather-flat-10/58/014_-_Sun-512.png"}
+  else {title = "Good Evening Mercusa"; show = `News at ${thours - 12}: Weather Tonight`; tnow = "this evening"; clr = `#ff005e`; icon = "https://cdn4.iconfinder.com/data/icons/weather-102/512/Weather_6-512.png"}
+  const WeatherMEmbed = new Discord.MessageEmbed()
+  .setColor(clr)
+  .setTitle(`${title}!`)
+  .setURL('https://www.theweatheroutlook.com')
+  .setAuthor(`RTM ${show}`, icon)
+  .setDescription(`${title}, let's have a look at ${tnow}'s weather: \n\n` + Veront.Veather("anlight",tim).toString() + "\n\n" + Veront.Veather("deliac",tim).toString() + "\n\n" + Veront.Veather("larion",tim).toString() + "\n\n" + Veront.Veather("torvalain",tim).toString() + "\n\n" + Veront.Veather("veront",tim).toString() + "\n\n And that's your weather - go out and have a great day, Mercusa!")
+	.setThumbnail(icon)
+  .setTimestamp()
+  .setFooter(`RTM ${show}`, icon);
+
+  channel.send(WeatherMEmbed);
+  console.log('Weather M Update')
 }
 
 function tubeStatus(channel, line) {
@@ -670,6 +690,11 @@ client.on('message', msg => {
     msg.channel.send(TracksEmbed);
   }
 
+  if (msg2.includes("~mercusa") && !msg.author.bot) {
+    tim = msg2.slice(msg2.indexOf('~mercusa')+8,);
+    if (tim){cheerioM(msg.channel,tim)}
+    else {cheerioM(msg.channel,0)}
+  }
   if (msg2.includes('~twb') && !msg.author.bot) {
     tim = msg2.slice(msg2.indexOf('~twb')+4,);
     if (tim){Veront.Xeather(msg.channel,tim)}
@@ -809,6 +834,9 @@ client.once('ready', async () => {
 
       if ((date.getUTCHours() === 00) && date.getMinutes() === 00){
         List.listWipe(channel5, `./xlist2.txt`, `#00ccff`, `Matthew`, 1);
+      }
+
+      if ((date.getUTCHours() === 22) && date.getMinutes() === 00){
         List.listWipe(channel5, `./vlist2.txt`, `#ff0066`, `Vanessa`, 1);
       }
 
