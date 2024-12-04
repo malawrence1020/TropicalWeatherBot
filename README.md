@@ -15,9 +15,9 @@ This is the second major version of Lucius, with lots of new functionality and l
 
 The Veront Temperature model has now reached v3.0, and both the Veather and Xeather functions finally read from this model. The model is much more realistic than before, incorporating north-south and continential-coastal variations, as well as daily fluctuations (which were apparently missing from v2.5). The Veront Precipitation model is now at v2.0. Whilst this does not embody a realistic field, I am very happy with the results this model produces. The only update relative to v1.0 is the incorporation of temperature controls to allow for snowfall. There is as of yet no sunrise/sunset model, but this would require axial tilt/solar declination, as well as a more concrete longitude/latitude system.
 
-I have not touched the python version in months, as Lucius is not suited to development in Python. See <a href="https://github.com/NecessarilyNess/Marina">here</a> for Lucius' sister, written in Python. Likewise, Lucius still lacks a help command. Maybe he can have one for Christmas.
+I have not touched the python version in months, as Lucius is not suited to development in Python. Likewise, Lucius still lacks a help command. Maybe he can have one for Christmas.
 
 Happy belated birthday Matthew!
 
-### v8: I should probably update this - hello Swack!
+### v9: I should probably update this - hello Swack!
 Yes I have been working on this, yes I am busy and have other things I should be doing. If you are from Swack, then hello, welcome to this shitshow!

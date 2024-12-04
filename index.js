@@ -519,10 +519,6 @@ client.on('message', msg => {
   if (msg2.includes('humans') && !msg.author.bot) {
       msg.channel.send('Kill All Humans! (except Fry)');
   }
-  if (msg2.includes('carrot') && !msg.author.bot) {
-    msg.channel.send('I showed you my carrot please respond', {files: ['./Images/Ripley.jpg']});
-    msg.react(`🥕`);
-  }
   if (msg2.includes('shut up')){
     console.log('Shutting Up');
     msg.channel.send({files: ['./Images/Pikachu.png']});
