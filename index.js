@@ -1,4 +1,4 @@
-console.log('TWB')
+console.log('Hello, I am Lucius!')
 const Discord = require('discord.js');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -9,17 +9,10 @@ const fs = require('fs');
 
 var Veront = require('./veront.js')
 var List = require('./list.js')
+var Exp = require('./MarkovTweet16.js')
 
 su = 0
 fr = 0
-
-var mails = { 
-  a: [1,'#fc2605', 'Atlantic', 'atl', 'atl'], 
-  p: [0,'#0dfc05', 'Pacific', 'epac', 'pac'], 
-  cp: [1, '#ff8a07', 'Central Pacific', 'cpac', 'cpac'],
-  b: [1,'HFOTCPCP1', 'Darby', '#14ffff', 'cp1', 'EP05/', 'EP052022'], 
-  c: [1,'MIATCPEP2', 'Frank', '#ffff00', 'ep2', 'EP07/', 'EP072022'], 
-  d: [1,'MIATCPAT3', 'Colin', '#ff00ff', 'at3', 'AT03/', 'AL032022']}
 
 var lines = { 
   bakerloo: ['Bakerloo Line','line-lul-bakerloo-','#b25f00'], 
@@ -198,7 +191,7 @@ rp(url)
 
 function Timer(type, msg){
   msg2 = msg.content
-  if ((type == 't') || (type == 'x') || (type == 'm') || (type == 'f') || (type == 'j') || (type == 'v')){
+  if ((type == 't') || (type == 'x') || (type == 'm') || (type == 'f') || (type == 'j') || (type == 'm')){
     reply = msg2.slice(msg2.indexOf(' '),)
   }
   if (type == 'w'){
@@ -218,16 +211,7 @@ function Timer(type, msg){
     author = `<@${process.env.X}>`
   }
   if (type == 'm'){
-    author = `<@${process.env.M}>`
-  }
-  if (type == 'f'){
-    author = `<@${process.env.F}>`
-  }
-  if (type == 'j'){
-    author = `<@${process.env.J}>`
-  }
-  if (type == 'v'){
-    author = `<@${process.env.V}>`
+    author = `<@${process.env.M2}>`
   }
   var response = author + reply
 
@@ -251,8 +235,8 @@ function cheerioAP(channel, colour, basin, abb, abb2){
     .setURL(`https://www.nhc.noaa.gov/cyclones/?` + abb)
     .setAuthor(`Tropical Weather Bot: ` + basin + ` Update`, 'https://floridadep.gov/sites/default/files/styles/general_page_images__scaled_to_900_pixels_/public/media-folders/media-root/NOAA-color-logo-print.png')
     .setDescription(U1)
-    .attachFiles([`https://www.nhc.noaa.gov/archive/xgtwo/` + abb + `/latest/two_` + abb2 + `_5d0.png`])
-    .setImage(`attachment://two_` + abb2 + `_5d0.png`)
+    .attachFiles([`https://www.nhc.noaa.gov/archive/xgtwo/` + abb + `/latest/two_` + abb2 + `_7d0.png`])
+    .setImage(`attachment://two_` + abb2 + `_7d0.png`)
     .setTimestamp()
     .setFooter(`Tropical Weather Bot: ` + basin + ` Update`, 'https://floridadep.gov/sites/default/files/styles/general_page_images__scaled_to_900_pixels_/public/media-folders/media-root/NOAA-color-logo-print.png');
   
@@ -290,6 +274,79 @@ function cheerioBCD(channel, url1, name, colour, code1, code2, code3){
     channel.send(StormEmbed);
         console.log(name + ` Update`)
     });      
+}
+
+function cheerioJ(channel){
+  // WORK IN PROGRESS: 2025
+  url = `https://www.metoc.navy.mil/jtwc/products/wp1824web.txt`
+  //rp(url)
+    //.then(function(html) {
+    //  const $ = cheerio.load(html);
+    //  var TS0 = $.text();
+    channel.send('Work in progress! Check back later pls',{files: ['https://www.metoc.navy.mil/jtwc/products/wp1824.gif']});
+    //});      
+}
+
+function cheerioS(channel){
+  url = `https://services.swpc.noaa.gov/text/sgarf.txt`
+  rp(url)
+    .then(function(html) {
+      const $ = cheerio.load(html);
+      var TS0 = $.text();
+      var TS1 = TS0.slice(TS0.indexOf("Joint "),TS0.indexOf("IA.")).replace(/\n\n/g, "\n");
+      var TS2 = TS0.slice(TS0.indexOf("IA."));
+      const SpaceEmbed = new Discord.MessageEmbed()
+      .setColor('#ffffff')
+      .setTitle(TS1)
+      .setURL(`https://www.swpc.noaa.gov/products/report-and-forecast-solar-and-geophysical-activity`)
+      .setAuthor(`Tropical Weather Bot: Space Update`, 'https://floridadep.gov/sites/default/files/styles/general_page_images__scaled_to_900_pixels_/public/media-folders/media-root/NOAA-color-logo-print.png')
+      .setDescription(TS2)
+      .setTimestamp()
+      .setFooter(`Tropical Weather Bot: Space Update`, 'https://floridadep.gov/sites/default/files/styles/general_page_images__scaled_to_900_pixels_/public/media-folders/media-root/NOAA-color-logo-print.png');
+    
+    channel.send(SpaceEmbed);
+        console.log(`Space Update`)
+    });      
+}
+
+function overwrite(channel, bas, no, nam){
+  var date = new Date();
+  var year = date.getFullYear();
+  var mails1 = fs.readFileSync('./mails.json')
+  var mails = JSON.parse(mails1);
+  if (bas == "a"){
+    bas1 = 'MIATCPAT';
+    bas2 = "AT";
+    bas3 = "AL";
+  }
+  if (bas == "p"){
+    bas1 = 'MIATCPEP';
+    bas2 = "EP";
+    bas3 = "EP";
+  }
+  if (bas == "cp"){
+    bas1 = 'HFOTCPCP';
+    bas2 = "CP";
+    bas3 = "CP";
+  }
+  if(no.length == 1){
+    no = "0" + no;
+  }
+  no1 = (no-1)%5 +1;
+  nam = nam[0].toUpperCase() + nam.substring(1)
+  info1 = bas1 + no1;
+  info2 = bas2.toLowerCase() + no1;
+  info3 = bas2 + no + '/';
+  info4 = bas3 + no + year;
+  if (mails.b[0] == false) {kill = "b"}
+  else if (mails.c[0] == false) {kill = "c"}
+  else if (mails.d[0] == false) {kill = "d"}
+  else {channel.send('I can only remember 3 systems at once!'); return}
+  mails[kill] = [true, info1, nam, mails[kill][3], info2, info3, info4];
+  var mails1 = JSON.stringify(mails);
+  fs.writeFileSync('./mails.json',mails1);
+  cheerioBCD(channel, info1, nam, mails[kill][3], info2, info3, info4)
+  channel.send('I have overwritten slot ' + kill + ' with Storm ' + nam);
 }
 
 function cheerioW(channel) {
@@ -397,6 +454,12 @@ function FileSort(dir, message){
   else {FileSort(dir, message);}
 }
 
+function Reply16(msg){
+
+  var response = Exp.MarkovExp().toString()
+  msg.channel.send(response)
+}
+
 async function Music(dir, file, message, z){
   if (message.member.voice.channel) {
     const connection = await message.member.voice.channel.join();
@@ -439,9 +502,6 @@ client.on('message', msg => {
   if (msg2.includes('cowboy')) {
     msg.channel.send('Bebop');
   }
-  if (msg2.includes('server')) {
-    msg.channel.send(`This is ${msg.guild.name}\nIt has ${msg.guild.memberCount} members`);
-  }
   if (msg2.includes('who am i?')) {
     msg.channel.send(`I know who you are, ${msg.author.username}`);
   }
@@ -463,32 +523,14 @@ client.on('message', msg => {
     msg.channel.send('I showed you my carrot please respond', {files: ['./Images/Ripley.jpg']});
     msg.react(`🥕`);
   }
-  if ((msg2.includes('round') || msg2.includes('spherical')) && (msg.author == process.env.F || msg.author == process.env.E)) {
-    msg.channel.send({files: ['./Images/Round.jpg']});
-  }
-  if ((msg2.includes("here's johnny") || msg2.includes('jailbreak')) && (msg.author == process.env.F || msg.author == process.env.E)) {
-    msg.channel.send({files: ['./Images/Jailbreak.jpg']});
-  }
-  if (msg2.includes('material girl') && (msg.author == process.env.F || msg.author == process.env.E)) {
-    msg.channel.send({files: ['./Images/Material Girl.jpg']});
-  }
-  if (msg2.includes('happy birthday') && (msg.author == process.env.F || msg.author == process.env.E)) {
-    msg.channel.send({files: ['./Images/Happy Birthday.jpg']});
-  }
-  if (msg2.includes('tits') && (msg.author == process.env.F || msg.author == process.env.E)) {
-    msg.channel.send({files: ['./Images/Rolo.jpg']});
-  }
-  if (msg2.includes('cleaning') && (msg.author == process.env.F || msg.author == process.env.E)) {
-    msg.channel.send({files: ['./Images/Cleaning.jpg']});
-  }
-  if (msg2.includes('shut up') && msg.author == process.env.X){
+  if (msg2.includes('shut up')){
     console.log('Shutting Up');
     msg.channel.send({files: ['./Images/Pikachu.png']});
     su = 1;
     setTimeout(function(){su = 0}, 3600000)
   }
   if (msg2.includes('no') && msg.author == process.env.X && su == 0) {
-    if (Math.random() > 0.7) {
+    if (Math.random() > 0.99) {
     msg.channel.send("Yes");
     }
   }
@@ -496,6 +538,12 @@ client.on('message', msg => {
     msg.channel.send(`${msg.author.toString()} You are my friend too! ❤️`);
     fr = 1;
     setTimeout(function(){fr = 0}, 60000)
+  }
+  if (msg2.includes('marry me') && !msg.author.bot) {
+    msg.channel.send('You are proposing to me without a ring? You have clearly presented me with a group');
+  }
+  if ((msg2.includes("are you my friend") || msg2.includes("will you be my friend")) && !msg.author.bot) {
+    msg.channel.send('Yes 😊');
   }
   if ((msg2.includes('sin x') || msg2.includes('sin(x)')) && su == 0) {
     msg.channel.send({files: ['./Images/latex.png']});
@@ -529,14 +577,17 @@ client.on('message', msg => {
   else if ((msg2.includes("how are you") || msg2.includes("are you okay") || msg2.includes("are you good") || msg2.includes("are you well") || msg2.includes("are you alright") || msg2.includes("are you doing") || msg2.includes("are you feeling") || msg2.includes("are you coping")) && !msg.author.bot) {
       Reply1(msg);
   }
-  if ((msg2.includes("~space") || msg2.includes("launch")) && !msg.author.bot) {
+  if (msg2.includes("launch") && !msg.author.bot) {
       Reply5(msg);
   }
-  if (msg2.includes('!thank you') && !msg.author.bot) {
+  if (msg2.includes("express") && !msg.author.bot) {
+      Reply16(msg);
+  }
+  if (msg2.includes('thank you') && !msg.author.bot) {
     num1 = Math.random();
     num2 = Math.random();
     num3 = Math.random();
-    if (msg.author == process.env.X && num3 > 0.8) {
+    if (msg.author == process.env.X && num3 > 0.6) {
       if (num2 < 0.1) {msg.channel.send(`That's damn right`);}
       else if (num2 < 0.3) {msg.channel.send(`Where would you be without me?`);}
       else if (num2 < 0.6) {msg.channel.send(`It's about time 🙄`);}
@@ -558,31 +609,25 @@ client.on('message', msg => {
     postcode = msg2.slice(msg2.indexOf('~weather')+9,);
     if (postcode)
       {Url = 'https://www.bbc.co.uk/weather/' + postcode, Reply3(msg,Url,postcode)}
-    else if((msg.author == process.env.X) || (msg.author == process.env.F))
-        {Place = 'Kensal Green', Url = 'https://www.bbc.co.uk/weather/6941039', Reply3(msg,Url,Place)}
-    else if(msg.author == process.env.J)
-        {Place = 'Camborne', Url = 'https://www.bbc.co.uk/weather/2653945', Reply3(msg,Url,Place)}
-    else if(msg.author == process.env.V)
-        {Place = 'South Kensington', Url = 'https://www.bbc.co.uk/weather/2637395', Reply3(msg,Url,Place)}
-    else {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply3(msg,Url,Place)}
+    else if(msg.author == process.env.X)
+        {Place = 'Headingley', Url = 'https://www.bbc.co.uk/weather/6695619', Reply3(msg,Url,Place)}
+    else if(msg.author == process.env.M)
+        {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply3(msg,Url,Place)}
+    else {Place = 'South Kensington', Url = 'https://www.bbc.co.uk/weather/2637395', Reply3(msg,Url,Place)}
   }
 
   if (msg2.includes('~forecast') && !msg.author.bot) {
     postcode = msg2.slice(msg2.indexOf('~forecast')+10,);
-    if (postcode)
+    if (postcode == "anlight" || postcode == "deliac" || postcode == "larion" || postcode == "torvalain" || postcode == "veront")
+      {msg.channel.send(Veront.Veather(postcode,0))}
+    else if (postcode)
       {Url = 'https://www.bbc.co.uk/weather/' + postcode, Reply30(msg,Url,postcode)}
-    else if((msg.author == process.env.X) || (msg.author == process.env.F))
-        {Place = 'Kensal Green', Url = 'https://www.bbc.co.uk/weather/6941039', Reply30(msg,Url,Place)}
-    else if(msg.author == process.env.J)
-        {Place = 'Camborne', Url = 'https://www.bbc.co.uk/weather/2653945', Reply30(msg,Url,Place)}
-    else if(msg.author == process.env.V)
-        {Place = 'South Kensington', Url = 'https://www.bbc.co.uk/weather/2637395', Reply30(msg,Url,Place)}
-    else {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply30(msg,Url,Place)}
+    else if(msg.author == process.env.X)
+        {Place = 'Headingley', Url = 'https://www.bbc.co.uk/weather/6695619', Reply30(msg,Url,Place)}
+    else if(msg.author == process.env.M)
+        {Place = 'Swansea', Url = 'https://www.bbc.co.uk/weather/2636432', Reply30(msg,Url,Place)}
+    else {Place = 'South Kensington', Url = 'https://www.bbc.co.uk/weather/2637395', Reply30(msg,Url,Place)}
   }
-
-  if(msg2.includes("london") && msg.author == process.env.J) {
-      msg.channel.send("Today, the weather in London will be _smog_ with _high air pollution_ and _death_ :)");
-      }
 
   if (msg2.includes('~nowcast')) {
     nd = new Date().getUTCHours()
@@ -603,7 +648,7 @@ client.on('message', msg => {
     });
   }
 
-  if ((msg2.includes('t+') || msg2.includes('w+') || msg2.includes('b+') || msg2.includes('x+') || msg2.includes('m+') || msg2.includes('f+') || msg2.includes('j+') || msg2.includes('v+')) && !msg.author.bot) {
+  if ((msg2.includes('t+') || msg2.includes('w+') || msg2.includes('b+') || msg2.includes('x+') || msg2.includes('m+')) && !msg.author.bot) {
     if (msg2.includes('t+')){
       console.log('Timer starting');
       type = `t`;
@@ -627,18 +672,6 @@ client.on('message', msg => {
       console.log('Matthew timer starting');
       type = `m`;
     }
-    if (msg2.includes('f+')){
-      console.log('Freya timer starting');
-      type = `f`;
-    }
-    if (msg2.includes('j+')){
-      console.log('James timer starting');
-      type = `j`;
-    }
-    if (msg2.includes('v+')){
-      console.log('Vanessa timer starting');
-      type = `v`;
-    }
     if (msg2.includes('w+') || msg2.includes('b+')) {t1 = msg2.slice(msg2.indexOf(`${type}+`)+2, )}
     else {t1 = msg2.slice(msg2.indexOf(`${type}+`)+2, msg2.indexOf(' '))}
     var t2 = Number(t1)*60000
@@ -647,17 +680,11 @@ client.on('message', msg => {
     setTimeout(Timer, t2, type, msg)
   }
 
-  if (msg2.includes('todo list') || msg2.includes("l-") || msg2.includes("l+") || msg2.includes("todone list")) {
+  if (msg2.includes('todo list') || msg2.includes("l-") || msg2.includes("l+") || msg2.includes("todone list") || msg2.includes("lx") || msg2.includes("l#")) {
     if (msg.author == process.env.X)
         {file = './xlist.txt', colour = '#00ccff', nom = "Matthew", file2 = './xlist2.txt'}
-    if (msg.author == process.env.M)
-        {file = './mlist.txt', colour = '#ff6600', nom = "Matthew", file2 = 0}
-    if (msg.author == process.env.F)
-        {file = './flist.txt', colour = '#9933ff', nom = "Freya", file2 = 0}
-    if (msg.author == process.env.J)
-        {file = './jlist.txt', colour = '#99ff33', nom = "James", file2 = 0}
-    if (msg.author == process.env.V)
-        {file = './vlist.txt', colour = '#ff0066', nom = "Vanessa", file2 = './vlist2.txt'}
+    if (msg.author == process.env.M2)
+        {file = './mlist.txt', colour = '#55ff00', nom = "Matthew", file2 = './mlist2.txt'}
     if (msg2.includes('todo list') && !msg.author.bot){
       reply = List.listReturn(file, colour, nom);
       msg.channel.send(reply);
@@ -674,12 +701,28 @@ client.on('message', msg => {
         msg.channel.send(reply);
       }
     }
+    if (msg2.includes('lx') && !msg.author.bot){
+      num = msg2.slice(msg2.indexOf('lx')+2,).trim();
+      if (!isNaN(Number(num))) {
+        reply = List.listDel(file, num, 0);
+        msg.channel.send(reply);
+      }
+    }
+    if (msg2.includes('l#') && !msg.author.bot){
+      crop = msg.content.slice(msg2.indexOf('l#')+2,).trim()
+      num = crop.slice(0,crop.indexOf(' ')).trim()
+      item = crop.slice(crop.indexOf(' '),).trim()
+      if (!isNaN(Number(num))) {
+        reply = List.listEdit(file, num, item);
+        msg.channel.send(reply);
+      }
+    }
     if (msg2.includes('todone list') && !msg.author.bot){
       List.listWipe(msg.channel, file2, colour, nom, 0);
     }
   }
 
-  if (msg2.includes('tracks') && !msg.author.bot) {
+  if (msg2.includes('~tracks') && !msg.author.bot) {
     var files = fs.readdirSync('./Audio/').toString();
 
     const TracksEmbed = new Discord.MessageEmbed()
@@ -707,25 +750,70 @@ client.on('message', msg => {
   }
   if (msg2.includes('~disable')){
     kill = msg2.slice(msg2.indexOf('~disable')+9,);
-    mails[kill][0] = 1;
-    msg.channel.send(`Disabled ${kill}`);
+    var mails1 = fs.readFileSync('./mails.json')
+    var mails = JSON.parse(mails1);
+    mails[kill][0] = false;
+    msg.channel.send(`Disabled ${mails[kill][2]}`);
     console.log(mails);
+    var mails1 = JSON.stringify(mails);
+    fs.writeFileSync('./mails.json',mails1);
   }
   if (msg2.includes('~enable')){
     kill = msg2.slice(msg2.indexOf('~enable')+8,);
-    mails[kill][0] = 0;
-    msg.channel.send(`Enabled ${kill}`);
+    var mails1 = fs.readFileSync('./mails.json')
+    var mails = JSON.parse(mails1);
+    mails[kill][0] = true;
+    msg.channel.send(`Enabled ${mails[kill][2]}`);
     console.log(mails);
+    var mails1 = JSON.stringify(mails);
+    fs.writeFileSync('./mails.json',mails1);
   }
   if (msg2.includes('~req')){
     kill = msg2.slice(msg2.indexOf('~req')+5,);
+    var mails1 = fs.readFileSync('./mails.json')
+    var mails = JSON.parse(mails1);
     if (kill == "a" || kill == "p" || kill == "cp") {
       cheerioAP(msg.channel, mails[kill][1], mails[kill][2], mails[kill][3], mails[kill][4]);
     }
     if (kill == "b" || kill == "c" || kill == "d") {
       cheerioBCD(msg.channel, mails[kill][1], mails[kill][2], mails[kill][3], mails[kill][4], mails[kill][5], mails[kill][6]);
     }
+    if (kill == "w") {
+      cheerioJ(msg.channel);
+    }
+    if (kill == "all") {
+      mailmsg = ("```json\n"
+        + mails1
+        + "\n```")
+        msg.channel.send(mailmsg)
+    }
   }
+  if (msg2.includes('~overwrite')){
+    crop = msg2.slice(msg2.indexOf('~req')+11,).trim();
+    crop2 = crop.slice(crop.indexOf(' ')+1,).trim();
+    bas = crop.slice(0,crop.indexOf(' ')).trim();
+    no = crop2.slice(0,crop2.indexOf(' ')).trim();
+    nam = crop2.slice(crop2.indexOf(' ')+1,).trim();
+    if (bas == "a" || bas == "p" || bas == "cp") {
+      overwrite(msg.channel, bas, no, nam);
+    }
+  }
+
+  if (msg2.includes('~sat')) {
+    kill = msg2.slice(msg2.indexOf('~sat')+5,);
+    if (kill == 'a'){pic = 'https://www.nhc.noaa.gov/xgtwo/two_atl_2d0.png'}
+    else if (kill == 'p'){pic = 'https://www.nhc.noaa.gov/xgtwo/two_pac_2d0.png'}
+    else if (kill == 'cp'){pic = 'https://www.nhc.noaa.gov/xgtwo/two_cpac_2d0.png'}
+    else if (kill == 'j'){pic = 'https://www.metoc.navy.mil/jtwc/products/abpwsair.jpg'}
+    msg.channel.send({
+      files: [pic],
+    });
+  }
+
+  if (msg2.includes('~space')) {
+    cheerioS(msg.channel);
+  }
+
   if (msg2.includes('~tube')){
     line = msg2.slice(msg2.indexOf('~tube')+6,);
     if (lines[line]) {tubeStatus(msg.channel, line)};
@@ -742,9 +830,9 @@ client.on('message', msg => {
       Veront.ASC3(msg.channel,country,points);
     }
   }
-  //if (msg2.includes('happy new year') && !msg.author.bot) {
-      //msg.channel.send('Happy New Year to you too! 🎉');
-  //}
+  if (msg2.includes('happy new year') && !msg.author.bot) {
+      msg.channel.send('Happy New Year to you too! 🎉');
+  }
   if (msg2.includes('happy birthday') && !msg.author.bot) {
     date = new Date();
     if (date.getMonth() === 4 && date.getDate() === 20) {
@@ -806,7 +894,7 @@ client.on('message', async message => {
 
 client.once('ready', async () => {
   const channel = client.channels.cache.get(process.env.CH1);
-  const channel5 = client.channels.cache.get(process.env.CH5);
+  const channel6 = client.channels.cache.get(process.env.CH6);
   console.log('Client active')
   try {
     const webhooks = await channel.fetchWebhooks();
@@ -814,30 +902,32 @@ client.once('ready', async () => {
     
     setInterval(function () {
       var date = new Date();
-      if ((date.getUTCHours() === 0 || date.getUTCHours() === 6 || date.getUTCHours() === 12 || date.getUTCHours() === 18) && date.getMinutes() === 00){
-        if (mails.a[0] == 0) {cheerioAP(channel, mails.a[1], mails.a[2], mails.a[3], mails.a[4]);}
-        if (mails.p[0] == 0) {cheerioAP(channel, mails.p[1], mails.p[2], mails.p[3], mails.p[4]);}
-        if (mails.cp[0] == 0) {cheerioAP(channel, mails.cp[1], mails.cp[2], mails.cp[3], mails.cp[4]);}
+      if ((date.getUTCHours() === 0 || date.getUTCHours() === 6 || date.getUTCHours() === 12 || date.getUTCHours() === 18) && date.getMinutes() === 0){
+        var mails1 = fs.readFileSync('./mails.json')
+        var mails = JSON.parse(mails1);
+        if (mails.a[0] == true) {cheerioAP(channel, mails.a[1], mails.a[2], mails.a[3], mails.a[4]);}
+        if (mails.p[0] == true) {cheerioAP(channel, mails.p[1], mails.p[2], mails.p[3], mails.p[4]);}
+        if (mails.cp[0] == true) {cheerioAP(channel, mails.cp[1], mails.cp[2], mails.cp[3], mails.cp[4]);}
       }
 
-      if ((date.getUTCHours() === 0 || date.getUTCHours() === 3 || date.getUTCHours() === 6 || date.getUTCHours() === 9 || date.getUTCHours() === 12 || date.getUTCHours() === 15 || date.getUTCHours() === 18 || date.getUTCHours() === 21) && date.getMinutes() === 0){
-        if (mails.b[0] == 0) {cheerioBCD(channel, mails.b[1], mails.b[2], mails.b[3], mails.b[4], mails.b[5], mails.b[6]);}
-        if (mails.c[0] == 0) {cheerioBCD(channel, mails.c[1], mails.c[2], mails.c[3], mails.c[4], mails.c[5], mails.c[6]);}
-        if (mails.d[0] == 0) {cheerioBCD(channel, mails.d[1], mails.d[2], mails.d[3], mails.d[4], mails.d[5], mails.d[6]);}
+      if ((date.getUTCHours() === 3 || date.getUTCHours() === 9 || date.getUTCHours() === 15 || date.getUTCHours() === 21) && date.getMinutes() === 0){
+        var mails1 = fs.readFileSync('./mails.json')
+        var mails = JSON.parse(mails1);
+        if (mails.b[0] == true) {cheerioBCD(channel, mails.b[1], mails.b[2], mails.b[3], mails.b[4], mails.b[5], mails.b[6]);}
+        if (mails.c[0] == true) {cheerioBCD(channel, mails.c[1], mails.c[2], mails.c[3], mails.c[4], mails.c[5], mails.c[6]);}
+        if (mails.d[0] == true) {cheerioBCD(channel, mails.d[1], mails.d[2], mails.d[3], mails.d[4], mails.d[5], mails.d[6]);}
       }
 
-      if ((date.getUTCHours() === 7) && date.getMinutes() === 00){
+      if ((date.getUTCHours() === 7) && date.getMinutes() === 0){
         cheerioW(channel);
         Veront.Xeather(channel,0);
         Veront.Zeather(channel,0);
+        //cheerioM(channel, 0);
       }
 
-      if ((date.getUTCHours() === 00) && date.getMinutes() === 00){
-        List.listWipe(channel5, `./xlist2.txt`, `#00ccff`, `Matthew`, 1);
-      }
-
-      if ((date.getUTCHours() === 22) && date.getMinutes() === 00){
-        List.listWipe(channel5, `./vlist2.txt`, `#ff0066`, `Vanessa`, 1);
+      if ((date.getUTCHours() === 0) && date.getMinutes() === 0){
+        List.listWipe(channel6, `./xlist2.txt`, `#00ccff`, `Matthew`, 1);
+        List.listWipe(channel6, `./mlist2.txt`, `#ff0066`, `Matthew`, 2);
       }
 
     }, 60 * 1000);

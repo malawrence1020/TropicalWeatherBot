@@ -269,7 +269,7 @@ module.exports = {
                   a = 0.8;
                   r = 255;
                   g = 0;
-                  b = Math.floor(255 - (pre - 2) * 155);
+                  b = Math.floor(200 - (pre - 2) * 100);
                 }
     
                 else {
@@ -329,14 +329,14 @@ module.exports = {
                   a = 0.8;
                   r = Math.floor(255*(1-temp));
                   g = Math.floor((180 + (pre - 1.75) * (70/0.5))*temp);
-                  b = Math.floor((180 - (pre - 1.75) * (180/0.5))*temp + (255 - (pre - 2) * 155)*(1-temp));
+                  b = Math.floor((180 - (pre - 1.75) * (180/0.5))*temp + (200 - (pre - 2) * 100)*(1-temp));
                 }
     
                 else if (pre < 3) {
                   a = 0.8;
                   r = Math.floor((100 + (pre - 2.25) * (155/0.75))*temp + 255*(1-temp));
                   g = Math.floor(255*temp);
-                  b = Math.floor((255 - (pre - 2) * 155)*(1-temp));
+                  b = Math.floor((200 - (pre - 2) * 100)*(1-temp));
                 }
     
                 else {

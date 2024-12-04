@@ -18,3 +18,6 @@ The Veront Temperature model has now reached v3.0, and both the Veather and Xeat
 I have not touched the python version in months, as Lucius is not suited to development in Python. See <a href="https://github.com/NecessarilyNess/Marina">here</a> for Lucius' sister, written in Python. Likewise, Lucius still lacks a help command. Maybe he can have one for Christmas.
 
 Happy belated birthday Matthew!
+
+### v8: I should probably update this - hello Swack!
+Yes I have been working on this, yes I am busy and have other things I should be doing. If you are from Swack, then hello, welcome to this shitshow!
